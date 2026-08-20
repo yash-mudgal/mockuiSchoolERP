@@ -498,22 +498,6 @@
    ========================================================================== */
 @media (max-width: 560px) {
 
-  /* --- density ----------------------------------------------------------
-     Lifting the control tokens here raises every button, input, select,
-     pager and nav row to a thumb-sized target in one move, instead of
-     patching each component. Compact density is re-stated because its
-     selector outranks a bare :root. */
-  :root,
-  :root[data-density="compact"] {
-    --control-h: var(--tap-min);
-    --control-h-sm: 38px;
-    --control-h-lg: 48px;
-    --nav-item-h: var(--tap-min);
-    --row-h: 48px;
-    --card-pad: var(--sp-3);
-    --stack-gap: var(--sp-3);
-  }
-
   /* --- sidebar drawer ---------------------------------------------------
      The overlay drawer itself is inherited from the 1024px block; this only
      widens it slightly and keeps its content clear of the notch and the
@@ -611,8 +595,9 @@
   .widget-grid > *:has(> .stat) { grid-column: span 6 !important; }
 }
 
+/* Small phone. The KPI strip is already one column here — the band above
+   simply stops applying — so this is only about reclaiming side gutters. */
 @media (max-width: 400px) {
-  /* Below ~400px a two-up KPI tile drops under 160px and the value clips. */
   .page-actions > * { flex: 1 1 100%; }
   .page { padding-left: calc(var(--sp-2) + var(--safe-l)); padding-right: calc(var(--sp-2) + var(--safe-r)); }
   .app-topbar { gap: 0; }

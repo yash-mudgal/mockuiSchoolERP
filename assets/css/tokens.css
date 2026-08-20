@@ -487,3 +487,24 @@
   --stack-gap: 14px;
   --fs-base: 13px;
 }
+
+/* ------------------------------------------------------- TOUCH DENSITY --
+   A third density, selected by viewport rather than by the user. Restating
+   the control sizes here lifts every button, icon button, input, select,
+   pager and nav row to a thumb-sized target in one move, instead of patching
+   each component in components.css. Card padding and stack gap come down at
+   the same time to buy back the width those taller controls cost.
+   `[data-density="compact"]` is repeated because its selector outranks a
+   bare `:root` — a phone should not inherit desktop-compact controls. */
+@media (max-width: 560px) {
+  :root,
+  :root[data-density="compact"] {
+    --control-h: var(--tap-min);
+    --control-h-sm: 38px;
+    --control-h-lg: 48px;
+    --nav-item-h: var(--tap-min);
+    --row-h: 48px;
+    --card-pad: var(--sp-3);
+    --stack-gap: var(--sp-3);
+  }
+}

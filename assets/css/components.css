@@ -1497,7 +1497,6 @@ th.is-sorted { color: var(--text); }
   .toolbar > *, .filterbar > * { min-width: 0; }
   .toolbar > .filterbar { flex: 1 1 100%; }
   /* search claims its own full-width row; the selects wrap under it */
-  .toolbar > .search-input, .filterbar > .search-input,
   .toolbar .search-input, .filterbar .search-input {
     flex: 1 1 100%; min-width: 0; width: 100%;
   }
