@@ -1,0 +1,218 @@
+/* ==========================================================================
+   charts.css — SVG chart chrome
+   Charts consume only --chart-* tokens (tokens.css). Never hardcode a colour.
+   Text in a chart always wears a text token; the coloured mark beside it
+   carries series identity.
+   ========================================================================== */
+
+.chart {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.chart-svg-wrap { position: relative; width: 100%; min-width: 0; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart-empty {
+  display: grid; place-items: center;
+  min-height: 120px;
+  color: var(--text-faint);
+  font-size: var(--fs-sm);
+}
+
+/* ------------------------------------------------------------------ axes */
+.ch-grid line {
+  stroke: var(--chart-grid);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.ch-axis line, .ch-axis path {
+  stroke: var(--chart-axis);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+  fill: none;
+}
+.ch-tick {
+  font-size: 10.5px;
+  fill: var(--chart-ink-muted);
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-sans);
+}
+.ch-axis-title {
+  font-size: 10.5px;
+  fill: var(--chart-ink-muted);
+  font-family: var(--font-sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.ch-label {
+  font-size: 11px;
+  fill: var(--chart-ink-2);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.ch-label-inside { fill: var(--chart-label-on-fill); }
+.ch-label-inside-dark { fill: var(--slate-950); }
+.ch-value-lg {
+  font-size: 22px; font-weight: 600;
+  fill: var(--chart-ink);
+  font-family: var(--font-sans);
+  letter-spacing: -0.02em;
+}
+.ch-value-sub { font-size: 11px; fill: var(--chart-ink-muted); font-family: var(--font-sans); }
+
+/* ----------------------------------------------------------------- marks */
+.ch-line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.ch-line-soft { stroke-width: 1.5; opacity: 0.9; }
+.ch-area { stroke: none; opacity: 0.10; }
+.ch-area-stack { stroke: none; opacity: 0.85; }
+.ch-bar { transition: opacity var(--dur-fast) var(--ease); }
+.ch-bar:hover { opacity: 0.82; }
+.ch-dot {
+  stroke: var(--chart-surface);
+  stroke-width: 2;
+}
+.ch-dot-hollow { fill: var(--chart-surface); stroke-width: 2; }
+.ch-track { fill: var(--chart-track); }
+.ch-ref-line {
+  stroke: var(--chart-ink-muted);
+  stroke-width: 1;
+  stroke-dasharray: none;
+  opacity: 0.55;
+}
+.ch-hit { fill: transparent; cursor: pointer; }
+.ch-crosshair {
+  stroke: var(--chart-axis);
+  stroke-width: 1;
+  pointer-events: none;
+}
+.ch-focus-ring { fill: none; stroke: var(--brand-500); stroke-width: 2; }
+
+.ch-series-1 { color: var(--chart-1); }
+.ch-series-2 { color: var(--chart-2); }
+.ch-series-3 { color: var(--chart-3); }
+.ch-series-4 { color: var(--chart-4); }
+.ch-series-5 { color: var(--chart-5); }
+.ch-series-6 { color: var(--chart-6); }
+.ch-series-7 { color: var(--chart-7); }
+.ch-series-8 { color: var(--chart-8); }
+
+/* ---------------------------------------------------------------- legend */
+.ch-legend {
+  display: flex; align-items: center; gap: var(--sp-4);
+  flex-wrap: wrap;
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+.ch-legend-item {
+  display: inline-flex; align-items: center; gap: 6px;
+  cursor: default;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+.ch-legend-item.is-muted { opacity: 0.4; }
+.ch-legend-item.is-toggleable { cursor: pointer; }
+.ch-swatch { width: 10px; height: 10px; border-radius: 2px; flex: none; background: currentColor; }
+.ch-swatch-line { width: 14px; height: 2px; border-radius: 2px; flex: none; background: currentColor; }
+.ch-swatch-dot { width: 9px; height: 9px; border-radius: var(--r-full); flex: none; background: currentColor; }
+.ch-legend-label { color: var(--text-secondary); }
+.ch-legend-value { color: var(--text); font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; }
+
+/* -------------------------------------------------------------- tooltip */
+.ch-tip {
+  position: absolute;
+  z-index: 5;
+  min-width: 130px;
+  padding: 8px 10px;
+  background: var(--surface-overlay);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--fs-sm);
+  pointer-events: none;
+  transform: translate(-50%, calc(-100% - 10px));
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease);
+  white-space: nowrap;
+}
+.ch-tip.is-visible { opacity: 1; }
+.ch-tip-title {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: var(--fw-semibold);
+  margin-bottom: 5px;
+}
+.ch-tip-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 2px 0;
+}
+.ch-tip-key { width: 12px; height: 2px; border-radius: 2px; flex: none; background: currentColor; }
+.ch-tip-val {
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+}
+.ch-tip-name { color: var(--text-muted); }
+
+/* --------------------------------------------------------- scale legend */
+.ch-scale { display: flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-xs); color: var(--text-muted); }
+.ch-scale-ramp { display: flex; height: 8px; border-radius: 2px; overflow: hidden; }
+.ch-scale-ramp > span { width: 18px; height: 100%; }
+
+/* ------------------------------------------------------------ table view */
+.ch-tableview {
+  max-height: 260px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+.ch-tableview table { font-size: var(--fs-sm); }
+.ch-tableview th, .ch-tableview td {
+  padding: 5px 9px;
+  border-bottom: 1px solid var(--border-subtle);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.ch-tableview th:first-child, .ch-tableview td:first-child { text-align: left; font-variant-numeric: normal; }
+.ch-tableview thead th {
+  position: sticky; top: 0;
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: var(--fw-semibold);
+}
+.ch-viewtoggle { display: flex; align-items: center; gap: var(--sp-2); margin-left: auto; }
+
+/* -------------------------------------------------------------- heatmap */
+.ch-cell { stroke: var(--chart-surface); stroke-width: 2; }
+.ch-cell:hover { stroke: var(--chart-ink); stroke-width: 1.5; }
+
+/* --------------------------------------------------------------- sparkline */
+.spark { display: block; width: 100%; height: 100%; overflow: visible; }
+.spark .ch-line { stroke-width: 1.75; }
+
+/* -------------------------------------------------------------- radial */
+.ch-ring-track { fill: none; stroke: var(--chart-track); }
+.ch-ring-fill { fill: none; stroke-linecap: round; transition: stroke-dashoffset var(--dur-slow) var(--ease); }
+
+/* --------------------------------------------------------- forced colors */
+@media (forced-colors: active) {
+  .ch-line, .ch-bar, .ch-dot { forced-color-adjust: none; }
+  .ch-grid line { stroke: CanvasText; opacity: 0.35; }
+}
+
+/* chart card body sizes to include the axis band */
+.chart-card .card-body { padding-bottom: var(--sp-3); }

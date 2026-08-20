@@ -1,0 +1,619 @@
+/* ==========================================================================
+   layout.css — app shell, sidebar, topbar, page header, content grid
+   ========================================================================== */
+
+#app { height: 100%; }
+
+.app-shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  grid-template-rows: 100%;
+  height: 100%;
+  background: var(--canvas);
+  transition: grid-template-columns var(--dur-slow) var(--ease);
+}
+.app-shell[data-collapsed="true"] { grid-template-columns: var(--sidebar-rail-w) minmax(0, 1fr); }
+
+/* ================================================================ sidebar = */
+.app-sidebar {
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  z-index: var(--z-sidebar);
+}
+
+.sb-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  height: var(--topbar-h);
+  padding: 0 var(--sp-4);
+  border-bottom: 1px solid var(--border);
+  flex: none;
+}
+.sb-logo {
+  width: 30px; height: 30px; flex: none;
+  border-radius: var(--r-md);
+  background: linear-gradient(140deg, var(--brand-500), var(--brand-700) 70%);
+  color: var(--on-brand);
+  display: grid; place-items: center;
+  box-shadow: var(--shadow-sm);
+}
+.sb-logo svg { width: 18px; height: 18px; }
+.sb-brand-text { min-width: 0; }
+.sb-brand-name { font-size: var(--fs-md); font-weight: var(--fw-semibold); letter-spacing: -0.01em; }
+.sb-brand-sub  { font-size: var(--fs-2xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.09em; }
+
+.sb-search { padding: var(--sp-3) var(--sp-3) var(--sp-2); flex: none; }
+
+.sb-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--sp-1) var(--sp-2) var(--sp-6);
+}
+
+.sb-section { margin-bottom: var(--sp-1); }
+.sb-section-head {
+  display: flex; align-items: center; gap: var(--sp-2);
+  width: 100%;
+  padding: var(--sp-2) var(--sp-2) var(--sp-1);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-faint);
+  border-radius: var(--r-sm);
+  transition: color var(--dur-fast) var(--ease);
+}
+.sb-section-head:hover { color: var(--text-secondary); }
+.sb-section-head .sb-caret { margin-left: auto; transition: transform var(--dur-base) var(--ease); opacity: 0.7; }
+.sb-section[data-open="false"] .sb-caret { transform: rotate(-90deg); }
+.sb-section[data-open="false"] .sb-items { display: none; }
+
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  width: 100%;
+  min-height: var(--nav-item-h);
+  padding: 0 var(--sp-2);
+  border-radius: var(--r-sm);
+  color: var(--text-secondary);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-medium);
+  text-align: left;
+  position: relative;
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.sb-item:hover { background: var(--surface-hover); color: var(--text); text-decoration: none; }
+.sb-item svg { width: 16px; height: 16px; opacity: 0.85; flex: none; }
+.sb-item-label { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sb-item.is-active {
+  background: var(--surface-selected);
+  color: var(--text-brand);
+  font-weight: var(--fw-semibold);
+}
+.sb-item.is-active svg { opacity: 1; }
+.sb-item.is-active::before {
+  content: "";
+  position: absolute; left: -8px; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 16px; border-radius: 0 var(--r-full) var(--r-full) 0;
+  background: var(--brand-500);
+}
+.sb-item .sb-pin {
+  opacity: 0; flex: none; width: 20px; height: 20px;
+  display: grid; place-items: center; border-radius: var(--r-xs);
+  color: var(--text-faint);
+}
+.sb-item:hover .sb-pin { opacity: 1; }
+.sb-item .sb-pin.is-on { opacity: 1; color: var(--warning-600); }
+.sb-item .sb-pin svg { width: 13px; height: 13px; }
+.sb-item .sb-pin:hover { background: var(--surface-active); color: var(--text); }
+
+.sb-badge {
+  flex: none;
+  min-width: 18px; height: 18px; padding: 0 5px;
+  border-radius: var(--r-full);
+  background: var(--brand-100); color: var(--text-brand);
+  font-size: var(--fs-2xs); font-weight: var(--fw-semibold);
+  display: grid; place-items: center;
+  font-variant-numeric: tabular-nums;
+}
+.sb-badge[data-tone="danger"] { background: var(--danger-100); color: var(--text-danger); }
+.sb-badge[data-tone="warning"] { background: var(--warning-100); color: var(--text-warning); }
+
+.sb-sub { margin: 2px 0 var(--sp-1) 0; padding-left: 26px; position: relative; }
+.sb-sub::before {
+  content: ""; position: absolute; left: 15px; top: 2px; bottom: 2px;
+  width: 1px; background: var(--border);
+}
+.sb-sub .sb-item { min-height: 28px; font-size: var(--fs-sm); font-weight: var(--fw-regular); }
+.sb-sub .sb-item.is-active::before { display: none; }
+.sb-parent .sb-caret { transition: transform var(--dur-base) var(--ease); opacity: 0.6; }
+.sb-parent[aria-expanded="false"] .sb-caret { transform: rotate(-90deg); }
+
+.sb-foot {
+  flex: none;
+  border-top: 1px solid var(--border);
+  padding: var(--sp-2);
+}
+
+/* Campus / academic year / role / theme, relocated into the drawer for the
+   phone tier. Hidden at every other width, where they live in the topbar.
+   The phone block in the responsive section flips this to `flex`. */
+.sb-context {
+  display: none;
+  flex-direction: column;
+  gap: var(--sp-1);
+  flex: none;
+  padding: var(--sp-2);
+  border-bottom: 1px solid var(--border);
+}
+.sb-context-btn {
+  display: flex; align-items: center; gap: var(--sp-3);
+  width: 100%;
+  min-height: var(--tap-min);
+  padding: 0 var(--sp-2);
+  border-radius: var(--r-sm);
+  color: var(--text-secondary);
+  font-size: var(--fs-md);
+  text-align: left;
+}
+.sb-context-btn:hover { background: var(--surface-hover); color: var(--text); }
+.sb-context-btn svg { width: 16px; height: 16px; opacity: 0.85; flex: none; }
+.sb-context-btn .chev { margin-left: auto; opacity: 0.6; }
+.sb-context-text { min-width: 0; flex: 1 1 auto; }
+.sb-context-label { font-size: var(--fs-2xs); color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.09em; }
+.sb-context-value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sb-context-btn[data-role="true"] {
+  border: 1px solid var(--border-brand);
+  background: var(--surface-accent);
+  color: var(--text-brand);
+}
+.sb-context-btn[data-role="true"] .sb-context-label { color: var(--text-brand); opacity: 0.75; }
+.sb-context-btn[data-role="true"] .sb-context-value { font-weight: var(--fw-semibold); }
+
+/* icon rail mode */
+.app-shell[data-collapsed="true"] .sb-brand-text,
+.app-shell[data-collapsed="true"] .sb-search,
+.app-shell[data-collapsed="true"] .sb-section-head,
+.app-shell[data-collapsed="true"] .sb-item-label,
+.app-shell[data-collapsed="true"] .sb-pin,
+.app-shell[data-collapsed="true"] .sb-caret,
+.app-shell[data-collapsed="true"] .sb-sub,
+.app-shell[data-collapsed="true"] .sb-foot-label { display: none; }
+.app-shell[data-collapsed="true"] .sb-brand { justify-content: center; padding: 0; }
+.app-shell[data-collapsed="true"] .sb-item { justify-content: center; padding: 0; }
+.app-shell[data-collapsed="true"] .sb-scroll { padding: var(--sp-2) var(--sp-2); }
+.app-shell[data-collapsed="true"] .sb-section { margin-bottom: var(--sp-2); padding-top: var(--sp-2); border-top: 1px solid var(--border-subtle); }
+.app-shell[data-collapsed="true"] .sb-section:first-child { border-top: 0; padding-top: 0; }
+.app-shell[data-collapsed="true"] .sb-badge {
+  position: absolute; top: 2px; right: 4px; min-width: 14px; height: 14px; font-size: 9px; padding: 0 3px;
+}
+
+/* ================================================================= topbar = */
+.app-body {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.app-topbar {
+  flex: none;
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-4);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  z-index: var(--z-topbar);
+}
+.tb-group { display: flex; align-items: center; gap: var(--sp-2); min-width: 0; }
+.tb-sep { width: 1px; height: 22px; background: var(--border); margin: 0 var(--sp-1); flex: none; }
+
+.tb-search {
+  display: flex; align-items: center; gap: var(--sp-2);
+  height: var(--control-h);
+  min-width: 220px; max-width: 420px; width: 32vw;
+  padding: 0 var(--sp-2) 0 var(--sp-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  font-size: var(--fs-md);
+  transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+.tb-search:hover { border-color: var(--border-strong); background: var(--surface); }
+.tb-search svg { width: 15px; height: 15px; }
+.tb-search .kbd-hint { margin-left: auto; }
+.tb-search-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+@media (max-width: 1320px) {
+  .tb-select-text { display: none; }
+  .tb-select { padding: 0 var(--sp-2); }
+}
+@media (max-width: 1140px) {
+  .tb-search { min-width: 0; width: auto; flex: 0 0 auto; }
+  .tb-search .tb-search-text, .tb-search .kbd-hint { display: none; }
+}
+
+.tb-icon-btn {
+  position: relative;
+  width: var(--control-h); height: var(--control-h);
+  display: grid; place-items: center;
+  border-radius: var(--r-md);
+  color: var(--text-secondary);
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.tb-icon-btn:hover { background: var(--surface-hover); color: var(--text); }
+.tb-icon-btn.is-on { background: var(--surface-selected); color: var(--text-brand); }
+.tb-icon-btn svg { width: 17px; height: 17px; }
+.tb-dot {
+  position: absolute; top: 6px; right: 6px;
+  min-width: 15px; height: 15px; padding: 0 4px;
+  border-radius: var(--r-full);
+  background: var(--danger-500); color: var(--on-danger);
+  font-size: 9px; font-weight: var(--fw-bold);
+  display: grid; place-items: center;
+  border: 2px solid var(--surface);
+  font-variant-numeric: tabular-nums;
+}
+
+.tb-select {
+  display: flex; align-items: center; gap: var(--sp-2);
+  height: var(--control-h);
+  padding: 0 var(--sp-2) 0 var(--sp-3);
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  font-size: var(--fs-md); font-weight: var(--fw-medium);
+  max-width: 230px;
+  transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.tb-select:hover { background: var(--surface-hover); border-color: var(--border); color: var(--text); }
+.tb-select svg:first-child { width: 15px; height: 15px; opacity: 0.75; }
+.tb-select .chev { width: 13px; height: 13px; opacity: 0.6; }
+.tb-select-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.tb-role {
+  display: flex; align-items: center; gap: var(--sp-2);
+  height: var(--control-h);
+  padding: 0 var(--sp-2) 0 var(--sp-2);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border-brand);
+  background: var(--surface-accent);
+  color: var(--text-brand);
+  font-size: var(--fs-sm); font-weight: var(--fw-semibold);
+  white-space: nowrap; flex: none;
+  transition: box-shadow var(--dur-fast) var(--ease);
+}
+.tb-role:hover { box-shadow: var(--shadow-sm); }
+.tb-role svg { width: 14px; height: 14px; }
+
+.tb-avatar { padding: 2px; border-radius: var(--r-full); }
+.tb-avatar:hover { background: var(--surface-hover); }
+
+/* Phone-only topbar brand mark. On desktop the brand lives in the always-on
+   sidebar; on a phone the sidebar is a drawer, so the topbar has to carry it.
+   The phone block flips this to `grid`. */
+.tb-brand {
+  display: none;
+  place-items: center;
+  width: 28px; height: 28px; flex: none;
+  border-radius: var(--r-sm);
+  background: linear-gradient(140deg, var(--brand-500), var(--brand-700) 70%);
+  color: var(--on-brand);
+}
+.tb-brand svg { width: 16px; height: 16px; }
+
+.sb-toggle { margin-right: var(--sp-1); }
+
+/* ============================================================= crumb bar = */
+.crumbbar {
+  flex: none;
+  height: var(--crumbbar-h);
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding: 0 var(--sp-6);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  overflow: hidden;
+}
+.crumb { display: inline-flex; align-items: center; gap: var(--sp-2); white-space: nowrap; }
+.crumb a { color: var(--text-muted); }
+.crumb a:hover { color: var(--text); text-decoration: none; }
+.crumb-sep { opacity: 0.5; }
+.crumb:last-child { color: var(--text); font-weight: var(--fw-medium); }
+.crumbbar .crumb-actions { margin-left: auto; display: flex; align-items: center; gap: var(--sp-2); }
+
+/* ================================================================== main = */
+.app-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scroll-behavior: smooth;
+}
+.page {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-gap);
+  animation: fade-in var(--dur-base) var(--ease-out) both;
+}
+.page-wide { max-width: none; }
+/* Column flex items default to min-width:auto, so one wide child (a table, a
+   timetable, a matrix) would stretch .page and put a horizontal scrollbar on
+   .app-main. Force every section to shrink; wide content scrolls in its own
+   .*-wrap container instead. */
+.page > * { min-width: 0; }
+
+/* ----------------------------------------------------------- page header = */
+.page-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+}
+.page-head-main { min-width: 0; flex: 1 1 380px; }
+.page-title-row { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; }
+.page-title {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-semibold);
+  letter-spacing: -0.022em;
+  line-height: 1.15;
+}
+.page-subtitle {
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: var(--fs-md);
+  max-width: 78ch;
+}
+.page-actions { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; }
+
+.page-tabs {
+  display: flex; align-items: center; gap: var(--sp-1);
+  border-bottom: 1px solid var(--border);
+  margin-top: calc(var(--sp-1) * -1);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.page-tabs::-webkit-scrollbar { display: none; }
+
+/* ---------------------------------------------------------- content grid = */
+.widget-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--sp-4);
+  align-items: start;
+}
+.span-1{grid-column:span 1} .span-2{grid-column:span 2} .span-3{grid-column:span 3}
+.span-4{grid-column:span 4} .span-5{grid-column:span 5} .span-6{grid-column:span 6}
+.span-7{grid-column:span 7} .span-8{grid-column:span 8} .span-9{grid-column:span 9}
+.span-10{grid-column:span 10} .span-11{grid-column:span 11} .span-12{grid-column:span 12}
+
+/* `.span-2` is the KPI stat tile (page-kit gives every tile span-2 once a
+   dashboard has five or more). Six to a row only reads on a wide monitor: below
+   ~1600px the tile drops under ~190px, which wraps labels like "Failed sign-ins"
+   onto three lines and leaves an eight-tile strip as a ragged 6 + 2. Widening
+   the tile as the viewport narrows keeps it legible and squares the strip off
+   (8 tiles become 4 + 4, then 3 + 3 + 2). */
+@media (max-width: 1600px) {
+  .span-2 { grid-column: span 3; }
+}
+@media (max-width: 1440px) {
+  .span-5 { grid-column: span 6; }
+  .span-7 { grid-column: span 6; }
+}
+@media (max-width: 1240px) {
+  .span-2 { grid-column: span 4; }
+  .span-3, .span-4 { grid-column: span 6; }
+  .span-8, .span-9, .span-10, .span-11 { grid-column: span 12; }
+}
+@media (max-width: 1024px) {
+  .span-2 { grid-column: span 6; }
+  .span-5, .span-6, .span-7 { grid-column: span 12; }
+}
+@media (max-width: 700px) {
+  .widget-grid > * { grid-column: span 12 !important; }
+}
+
+/* detail page split */
+.detail-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: var(--sp-4);
+  align-items: start;
+}
+@media (max-width: 1180px) { .detail-split { grid-template-columns: minmax(0, 1fr); } }
+
+/* form page split */
+.form-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: var(--sp-6);
+  align-items: start;
+}
+@media (max-width: 1080px) { .form-split { grid-template-columns: minmax(0, 1fr); } }
+
+/* =============================================================== overlays = */
+.scrim {
+  position: fixed; inset: 0;
+  background: var(--scrim);
+  z-index: var(--z-drawer);
+  animation: fade-in var(--dur-base) var(--ease-out) both;
+  backdrop-filter: blur(1px);
+}
+
+/* ============================================================= responsive = */
+@media (max-width: 1024px) {
+  .app-shell { grid-template-columns: minmax(0, 1fr); }
+  .app-shell[data-collapsed="true"] { grid-template-columns: minmax(0, 1fr); }
+  .app-sidebar {
+    position: fixed; top: 0; bottom: 0; left: 0;
+    width: min(300px, 86vw);
+    transform: translateX(-100%);
+    transition: transform var(--dur-slow) var(--ease);
+    box-shadow: var(--shadow-xl);
+  }
+  .app-shell[data-mobile-nav="true"] .app-sidebar { transform: none; }
+  .app-shell[data-collapsed="true"] .sb-brand-text,
+  .app-shell[data-collapsed="true"] .sb-search,
+  .app-shell[data-collapsed="true"] .sb-section-head,
+  .app-shell[data-collapsed="true"] .sb-item-label,
+  .app-shell[data-collapsed="true"] .sb-sub { display: revert; }
+  .app-shell[data-collapsed="true"] .sb-item { justify-content: flex-start; padding: 0 var(--sp-2); }
+  .app-body { grid-column: 1; }
+  .page { padding: var(--sp-4); }
+  .crumbbar { padding: 0 var(--sp-4); }
+  .tb-search { min-width: 0; width: auto; }
+  .tb-search .tb-search-text, .tb-search .kbd-hint { display: none; }
+  .tb-select-text { display: none; }
+}
+
+@media (max-width: 760px) {
+  .app-topbar { padding: 0 var(--sp-3); gap: var(--sp-1); }
+  .tb-hide-sm { display: none !important; }
+  .page { padding: var(--sp-3); }
+  .page-title { font-size: var(--fs-xl); }
+}
+
+/* ==========================================================================
+   PHONE TIER — 560px and below
+   Everything above this comment is the desktop/tablet product and is left
+   untouched. A phone is not a small desktop: the shell loses its persistent
+   chrome, the topbar drops to five reachable targets, headers stack, and any
+   grid too wide to fold gets its own horizontal scroller.
+   ========================================================================== */
+@media (max-width: 560px) {
+
+  /* --- density ----------------------------------------------------------
+     Lifting the control tokens here raises every button, input, select,
+     pager and nav row to a thumb-sized target in one move, instead of
+     patching each component. Compact density is re-stated because its
+     selector outranks a bare :root. */
+  :root,
+  :root[data-density="compact"] {
+    --control-h: var(--tap-min);
+    --control-h-sm: 38px;
+    --control-h-lg: 48px;
+    --nav-item-h: var(--tap-min);
+    --row-h: 48px;
+    --card-pad: var(--sp-3);
+    --stack-gap: var(--sp-3);
+  }
+
+  /* --- sidebar drawer ---------------------------------------------------
+     The overlay drawer itself is inherited from the 1024px block; this only
+     widens it slightly and keeps its content clear of the notch and the
+     home indicator. */
+  .app-sidebar {
+    width: min(320px, 88vw);
+    padding-top: var(--safe-t);
+    padding-bottom: var(--safe-b);
+    padding-left: var(--safe-l);
+  }
+  .sb-brand { padding: 0 var(--sp-3); }
+  .sb-scroll { padding: var(--sp-1) var(--sp-2) var(--sp-8); }
+  .sb-item { padding: 0 var(--sp-3); }
+  .sb-sub .sb-item { min-height: 40px; font-size: var(--fs-md); }
+  /* the pin is hover-only on desktop; on touch there is no hover, so it can
+     never be revealed and only steals width from the label */
+  .sb-item .sb-pin { display: none; }
+
+  /* Campus / academic year / role / theme move OFF the topbar and into the
+     drawer, where there is room for them. app.js renders this block on every
+     build; it stays hidden until the phone tier. */
+  .sb-context { display: flex; }
+
+  /* --- topbar -----------------------------------------------------------
+     At 360px only five targets fit at 44px each. Kept: nav, brand, search,
+     notifications, avatar (+ quick-add, which still fits). Everything else
+     is relocated, never merely hidden — see .sb-context above and the
+     avatar menu in app.js. */
+  .app-topbar {
+    height: calc(var(--topbar-h) + var(--safe-t));
+    padding: var(--safe-t) calc(var(--sp-2) + var(--safe-r)) 0 calc(var(--sp-2) + var(--safe-l));
+    gap: 2px;
+  }
+  .tb-brand { display: grid; }
+  .tb-role, .tb-theme, .tb-sep { display: none; }
+  .app-topbar .tb-icon-btn { width: var(--tap-min); height: var(--tap-min); }
+
+  /* the search pill collapses to a plain icon button that opens the palette */
+  .tb-search {
+    width: var(--tap-min); min-width: 0; max-width: none;
+    height: var(--tap-min);
+    padding: 0;
+    justify-content: center;
+    border-color: transparent;
+    background: transparent;
+  }
+  .tb-search:hover { background: var(--surface-hover); border-color: transparent; }
+  .tb-search svg { width: 18px; height: 18px; }
+
+  /* --- crumb bar --------------------------------------------------------
+     Was `overflow: hidden`, which silently amputated deep trails. */
+  .crumbbar {
+    padding: 0 calc(var(--sp-3) + var(--safe-r)) 0 calc(var(--sp-3) + var(--safe-l));
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .crumbbar::-webkit-scrollbar { display: none; }
+  .crumbbar .crumb-actions { display: none; }
+
+  /* --- page frame ------------------------------------------------------- */
+  .page {
+    padding: var(--sp-3) calc(var(--sp-3) + var(--safe-r)) calc(var(--sp-6) + var(--safe-b)) calc(var(--sp-3) + var(--safe-l));
+  }
+
+  /* --- page header: title, subtitle, then actions, all stacked ---------- */
+  .page-head { flex-direction: column; align-items: stretch; gap: var(--sp-3); }
+  .page-head-main { flex: 1 1 auto; }
+  .page-title {
+    font-size: var(--fs-xl);
+    /* a long screen name wraps instead of stretching .page and dragging a
+       horizontal scrollbar onto .app-main */
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+  .page-subtitle { font-size: var(--fs-sm); max-width: none; }
+  .page-actions { width: 100%; gap: var(--sp-2); }
+  /* two actions sit side by side, three or more wrap to full-width rows */
+  .page-actions > * { flex: 1 1 calc(50% - var(--sp-2)); min-width: 0; }
+  .page-actions > .btn { justify-content: center; }
+
+  /* --- widget grid ------------------------------------------------------
+     One column for real content (inherited from the 700px rule above). */
+  .widget-grid { gap: var(--sp-3); }
+  .detail-split, .form-split { gap: var(--sp-3); }
+}
+
+/* KPI tiles are the exception to the one-column rule: two up still reads at
+   401px and up, so a four-tile strip stays a 2x2 block instead of a
+   four-screen scroll. :has() picks the tiles out without page-kit having to
+   tag them. Scoped to a band so the <=400px rule below wins outright — both
+   carry !important and this selector is the more specific of the two. */
+@media (min-width: 401px) and (max-width: 560px) {
+  .widget-grid > *:has(> .stat) { grid-column: span 6 !important; }
+}
+
+@media (max-width: 400px) {
+  /* Below ~400px a two-up KPI tile drops under 160px and the value clips. */
+  .page-actions > * { flex: 1 1 100%; }
+  .page { padding-left: calc(var(--sp-2) + var(--safe-l)); padding-right: calc(var(--sp-2) + var(--safe-r)); }
+  .app-topbar { gap: 0; }
+}

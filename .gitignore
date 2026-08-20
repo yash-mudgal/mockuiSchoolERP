@@ -1,0 +1,14 @@
+# OS / editor cruft
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/
+
+# Python bytecode from serve.py
+__pycache__/
+*.py[cod]
+
+# Nothing here needs building or installing — no node_modules, no dist.
+# The whole folder IS the deployable artifact.
+node_modules/
